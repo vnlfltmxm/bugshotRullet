@@ -16,11 +16,17 @@ public class LocalPlayer : NetworkBehaviour
     private float _cameraYRotate;
     private float _rotateSpeed = 150.0f;
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
 
-    
+        //localPlayer_Camera.transform.forward = transform.forward;
+    }
+
 
     private void Start()
     {
+        localPlayer_Camera.transform.forward = transform.forward;        
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -52,7 +58,7 @@ public class LocalPlayer : NetworkBehaviour
 
         _cameraYRotate = Mathf.Clamp(_cameraYRotate, -10, 20);
         _cameraXRotate = Mathf.Clamp(_cameraXRotate, -60, 60);
-        localPlayer_Camera.transform.rotation = Quaternion.Euler(_cameraYRotate, _cameraXRotate, 0f);
+        localPlayer_Camera.transform.localRotation = Quaternion.Euler(_cameraYRotate, _cameraXRotate, 0f);
         //localPlayer_Camera.transform.eulerAngles = new Vector3(_cameraYRotate, _cameraXRotate, 0);
     }
 
