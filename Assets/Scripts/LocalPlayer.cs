@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEditor;
 using UnityEngine;
+using Mirror;
 
-public class LocalPlayer : MonoBehaviour
+public class LocalPlayer : NetworkBehaviour
 {
     [SerializeField]
     private Camera localPlayer_Camera;
@@ -16,10 +17,7 @@ public class LocalPlayer : MonoBehaviour
     private float _rotateSpeed = 150.0f;
 
 
-    private void Awake()
-    {
-        //StartCameraRotate();
-    }
+    
 
     private void Start()
     {
@@ -31,12 +29,17 @@ public class LocalPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!isLocalPlayer)
+        {
+            return;
+        }
         //if(Input.mousePosition.x < Screen.width 
         //    && Input.mousePosition.y < Screen.height)
         //{
         //    CameraRotate();
         //}
         CameraRotate();
+        MouseTest();
     }
 
     private void CameraRotate()
@@ -53,14 +56,12 @@ public class LocalPlayer : MonoBehaviour
         //localPlayer_Camera.transform.eulerAngles = new Vector3(_cameraYRotate, _cameraXRotate, 0);
     }
 
-    private void StartCameraRotate()
+    private void MouseTest()
     {
-        _mouseYRotate = Input.GetAxis("Mouse Y");
-        _mouseXRotate = -Input.GetAxis("Mouse X");
-
-        _cameraXRotate += _mouseXRotate;
-        _cameraYRotate += _mouseYRotate;
-
-        localPlayer_Camera.transform.rotation = Quaternion.Euler(_cameraYRotate, _cameraXRotate, 0f);
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 }
