@@ -7,7 +7,6 @@ using Mirror;
 
 public class LocalPlayer : NetworkBehaviour
 {
-
     public Transform _gunPos;
 
     [SerializeField]

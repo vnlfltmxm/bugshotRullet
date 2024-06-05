@@ -9,15 +9,20 @@ public class GameManger : Singleton<GameManger>
     public GameObject Gun_Prefab;
     public Transform Gun_GunSpawnPos;
 
-    //[SyncVar]
+    [SyncVar]
     private GameObject[] _players = new GameObject[2];
 
     [HideInInspector]
     public GameObject _gun;
 
     private ShoutGun _shoutGun;
-    private GameObject _nowPlayer;
 
+    [HideInInspector]
+    [SyncVar]
+    public GameObject _nowPlayer;
+
+    [SyncVar]
+    private int _nowPlayerIndex;
 
     // Start is called before the first frame update
     void Start()
@@ -27,15 +32,25 @@ public class GameManger : Singleton<GameManger>
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (!isClient)
         {
-            _nowPlayer = _players[0];
+            return;
         }
-        if(_nowPlayer != null&&_gun.transform.position!=_nowPlayer.GetComponent<LocalPlayer>()._gunPos.position)
+        if(_gun != null)
         {
-            Gun(_players[0]);
+            if (_nowPlayer != null && _gun.transform.position != _nowPlayer.GetComponent<LocalPlayer>()._gunPos.position)
+            {
+                MoveGunToPlayer(_nowPlayer);
+            }
+        }
 
+        if (Input.GetMouseButtonUp(1))
+        {
+            _nowPlayer = null;
         }
+        Debug.Log(_nowPlayerIndex);
+        Debug.Log(_players[1]);
+        Debug.Log(_players[1].GetComponent<LocalPlayer>()._gunPos.transform.position);
     }
     [Server]
     public void SetPlayers(GameObject player)
@@ -53,29 +68,55 @@ public class GameManger : Singleton<GameManger>
             _gun = Instantiate(Gun_Prefab, Gun_GunSpawnPos.position, Gun_GunSpawnPos.rotation);
             NetworkServer.Spawn(_gun);
             _shoutGun=_gun.GetComponent<ShoutGun>();
-            ReadyGame();
+            SetStartPlayer();
+            
         }
     }
 
     [ClientRpc]//실험용
     private void ReadyGame()
     {
+
         
-        Debug.LogWarning("2명 준비됨");
     }
    
 
-    [Server]//실험용
-    private void Gun(GameObject player)
+    [Server]
+    private void MoveGunToPlayer(GameObject player)
     {
-        _shoutGun.Move(player);
+        _shoutGun.MoveToPlayer(player);
         //MoveGun(player);
     }
 
-    [ClientRpc]//실험용
-    private void MoveGun(GameObject player)
+    [Server]
+    private void GunPosReset(GameObject gunPosObj)
     {
-        
+        _shoutGun.ResetMove(gunPosObj);
+    }
+    //[ClientRpc]//실험용
+    //private void MoveGun(GameObject player)
+    //{
+
+    //}
+
+    [Server]
+    private void SetStartPlayer()
+    {
+        int index = Random.Range(0, 2);
+        SetNowPlayer(1);
     }
 
+    [Server]
+    private void SetNowPlayer(int index)
+    {
+        ClientSetPlayer(index);
+        ReadyGame();
+    }
+
+    [ClientRpc]
+    private void ClientSetPlayer(int index)
+    {
+        _nowPlayerIndex = index;
+        _nowPlayer = _players[_nowPlayerIndex];
+    }
 }

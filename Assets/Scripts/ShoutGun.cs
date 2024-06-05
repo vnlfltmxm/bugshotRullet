@@ -17,13 +17,23 @@ public class ShoutGun : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void Move(GameObject playerGunPos)
+    public void MoveToPlayer(GameObject player)
     {
-        if (playerGunPos != null)
+        if (player != null)
         {
-            this.gameObject.transform.Translate((playerGunPos.GetComponent<LocalPlayer>()._gunPos.position - gameObject.transform.position) * _moveSpeed * Time.deltaTime);
-            this.gameObject.transform.rotation = playerGunPos.GetComponent<LocalPlayer>()._gunPos.rotation;
+            this.gameObject.transform.Translate((player.GetComponent<LocalPlayer>()._gunPos.position - this.gameObject.transform.position) * _moveSpeed * Time.deltaTime);
+            this.gameObject.transform.rotation = player.GetComponent<LocalPlayer>()._gunPos.rotation;
+
         }
     }
+    [ClientRpc]
+    public void ResetMove(GameObject gunPos)
+    {
+        if (gunPos != null)
+        {
+            this.gameObject.transform.Translate((gunPos.transform.position - gameObject.transform.position) * _moveSpeed * Time.deltaTime);
+            this.gameObject.transform.rotation = gunPos.transform.rotation;
 
+        }
+    }
 }

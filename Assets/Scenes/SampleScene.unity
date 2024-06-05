@@ -253,6 +253,7 @@ MonoBehaviour:
   Gun_Prefab: {fileID: 598836478655940172, guid: 08955c64bfe7c8a4d9dd89661b61c7d9, type: 3}
   Gun_GunSpawnPos: {fileID: 1389374133}
   _gun: {fileID: 0}
+  _nowPlayer: {fileID: 0}
 --- !u!1 &935252341
 GameObject:
   m_ObjectHideFlags: 0
@@ -436,6 +437,14 @@ PrefabInstance:
     - target: {fileID: 1693774057459631303, guid: 6d0db90cec0b443439f9b59285bf3b69, type: 3}
       propertyPath: m_Name
       value: Map
+      objectReference: {fileID: 0}
+    - target: {fileID: 3269700269595065055, guid: 6d0db90cec0b443439f9b59285bf3b69, type: 3}
+      propertyPath: sceneId
+      value: 27288227
+      objectReference: {fileID: 0}
+    - target: {fileID: 8324727585739904686, guid: 6d0db90cec0b443439f9b59285bf3b69, type: 3}
+      propertyPath: sceneId
+      value: 2408496761
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d0db90cec0b443439f9b59285bf3b69, type: 3}
