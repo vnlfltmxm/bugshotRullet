@@ -21,7 +21,7 @@ public class ShoutGun : NetworkBehaviour
     {
         if (playerGunPos != null)
         {
-            this.gameObject.transform.Translate(playerGunPos.GetComponent<LocalPlayer>()._gunPos.position * _moveSpeed * Time.deltaTime);
+            this.gameObject.transform.Translate((playerGunPos.GetComponent<LocalPlayer>()._gunPos.position - gameObject.transform.position) * _moveSpeed * Time.deltaTime);
             this.gameObject.transform.rotation = playerGunPos.GetComponent<LocalPlayer>()._gunPos.rotation;
         }
     }

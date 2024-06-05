@@ -16,7 +16,7 @@ public class GameManger : Singleton<GameManger>
     public GameObject _gun;
 
     private ShoutGun _shoutGun;
-
+    private GameObject _nowPlayer;
 
 
     // Start is called before the first frame update
@@ -29,7 +29,12 @@ public class GameManger : Singleton<GameManger>
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            _nowPlayer = _players[0];
+        }
+        if(_nowPlayer != null&&_gun.transform.position!=_nowPlayer.GetComponent<LocalPlayer>()._gunPos.position)
+        {
             Gun(_players[0]);
+
         }
     }
     [Server]
