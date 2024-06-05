@@ -252,6 +252,7 @@ MonoBehaviour:
   syncInterval: 0
   Gun_Prefab: {fileID: 8154593054247537034, guid: 722640c6b61d3fb4d90a23fc4ad04cbe, type: 3}
   Gun_GunSpawnPos: {fileID: 1389374133}
+  _gun: {fileID: 0}
 --- !u!1 &935252341
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,7 +317,7 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 1
   spawnPrefabs:
-  - {fileID: 8154593054247537034, guid: 722640c6b61d3fb4d90a23fc4ad04cbe, type: 3}
+  - {fileID: 598836478655940172, guid: 08955c64bfe7c8a4d9dd89661b61c7d9, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -435,10 +436,6 @@ PrefabInstance:
     - target: {fileID: 1693774057459631303, guid: 6d0db90cec0b443439f9b59285bf3b69, type: 3}
       propertyPath: m_Name
       value: Map
-      objectReference: {fileID: 0}
-    - target: {fileID: 2650684535154090269, guid: 6d0db90cec0b443439f9b59285bf3b69, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 36.31
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d0db90cec0b443439f9b59285bf3b69, type: 3}

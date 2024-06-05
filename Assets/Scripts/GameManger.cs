@@ -12,6 +12,12 @@ public class GameManger : Singleton<GameManger>
     //[SyncVar]
     private GameObject[] _players = new GameObject[2];
 
+    [HideInInspector]
+    public GameObject _gun;
+
+    private ShoutGun _shoutGun;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -21,7 +27,10 @@ public class GameManger : Singleton<GameManger>
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Gun(_players[0]);
+        }
     }
     [Server]
     public void SetPlayers(GameObject player)
@@ -36,8 +45,9 @@ public class GameManger : Singleton<GameManger>
         else
         {
             _players[1] = player;
-            GameObject gun = Instantiate(Gun_Prefab, Gun_GunSpawnPos.position, Gun_GunSpawnPos.rotation);
-            NetworkServer.Spawn(gun);
+            _gun = Instantiate(Gun_Prefab, Gun_GunSpawnPos.position, Gun_GunSpawnPos.rotation);
+            NetworkServer.Spawn(_gun);
+            _shoutGun=_gun.GetComponent<ShoutGun>();
             ReadyGame();
         }
     }
@@ -47,6 +57,20 @@ public class GameManger : Singleton<GameManger>
     {
         
         Debug.LogWarning("2명 준비됨");
+    }
+   
+
+    [Server]//실험용
+    private void Gun(GameObject player)
+    {
+        _shoutGun.Move(player);
+        //MoveGun(player);
+    }
+
+    [ClientRpc]//실험용
+    private void MoveGun(GameObject player)
+    {
+        
     }
 
 }

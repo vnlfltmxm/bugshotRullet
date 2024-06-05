@@ -178,6 +178,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49734a6f9551dac4e95e87e383a4d515, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _gunPos: {fileID: 7819671608009531531}
   localPlayer_Camera: {fileID: 6260055870474035127}
 --- !u!114 &3000542554144627921
 MonoBehaviour:

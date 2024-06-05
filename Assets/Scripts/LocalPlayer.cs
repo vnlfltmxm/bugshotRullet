@@ -7,6 +7,9 @@ using Mirror;
 
 public class LocalPlayer : NetworkBehaviour
 {
+
+    public Transform _gunPos;
+
     [SerializeField]
     private Camera localPlayer_Camera;
 
