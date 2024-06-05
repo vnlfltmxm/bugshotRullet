@@ -16,19 +16,17 @@ public class LocalPlayer : NetworkBehaviour
     private float _cameraYRotate;
     private float _rotateSpeed = 150.0f;
 
-    public override void OnStartClient()
-    {
-        base.OnStartClient();
-
-        //localPlayer_Camera.transform.forward = transform.forward;
-    }
-
-
     private void Start()
     {
+        if (!isLocalPlayer)
+        {
+            localPlayer_Camera.gameObject.SetActive(false);
+            return;
+        }
         localPlayer_Camera.transform.forward = transform.forward;        
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        RegistrationSelf(this.gameObject);
     }
 
 
@@ -70,4 +68,11 @@ public class LocalPlayer : NetworkBehaviour
             Cursor.visible = true;
         }
     }
+
+    [Command]
+    private void RegistrationSelf(GameObject player)
+    {
+        GameManger.Instance.SetPlayers(this.gameObject);
+    }
+
 }
