@@ -23,6 +23,7 @@ public class GameManger : Singleton<GameManger>
     public GameObject _nowPlayer;
 
     [SyncVar]
+    private int _index;
     private int _nowPlayerIndex;
 
     // Start is called before the first frame update
@@ -33,10 +34,10 @@ public class GameManger : Singleton<GameManger>
     // Update is called once per frame
     void Update()
     {
-        if (!isServer)
-        {
-            return;
-        }
+        //if (!isServer)
+        //{
+        //    return;
+        //}
 
         //if(_gun != null)
         //{
@@ -100,7 +101,8 @@ public class GameManger : Singleton<GameManger>
     private void SetStartPlayer()
     {
         int index = Random.Range(0, 2);
-        SetNowPlayer(0);
+        ReseveSeverIndex(1);
+        SetNowPlayer(1);
     }
 
     [Server]
@@ -109,7 +111,12 @@ public class GameManger : Singleton<GameManger>
         ClientSetPlayer(index);
         ReadyGame();
     }
-
+    [ClientRpc]
+    private void ReseveSeverIndex(int index)
+    {
+        _index = index;
+        _nowPlayerIndex = _index;
+    }
     [ClientRpc]
     private void ReseveSeverPlayer(GameObject[] severPlayers,GameObject gun)
     {
@@ -122,7 +129,7 @@ public class GameManger : Singleton<GameManger>
     [ClientRpc]
     private void ClientSetPlayer(int index)
     {
-        _nowPlayerIndex = index;
+        _index = index;
         _nowPlayer = _players[_nowPlayerIndex];
         _nowPlayer.GetComponent<LocalPlayer>()._isLocalPlayerTurn = true;
     }

@@ -4,6 +4,7 @@ using System.Threading;
 using UnityEditor;
 using UnityEngine;
 using Mirror;
+using Org.BouncyCastle.Asn1.Cmp;
 
 public class LocalPlayer : NetworkBehaviour
 {
@@ -12,8 +13,7 @@ public class LocalPlayer : NetworkBehaviour
 
     public Transform _gunPos;
 
-    [SerializeField]
-    private Camera localPlayer_Camera;
+    public Camera localPlayer_Camera;
 
     private float _mouseXRotate;
     private float _mouseYRotate;
@@ -56,14 +56,17 @@ public class LocalPlayer : NetworkBehaviour
         {
             return;
         }
-        if (_gunPos != GameManger.Instance._gun.transform)
+        if (Vector3.Distance(_gunPos.position, GameManger.Instance._gun.transform.position) >= 10.0f) 
             MoveGunToPlayer(this.gameObject);
+
+        AimingShoutGun();
     }
     [Command]
     private void MoveGunToPlayer(GameObject player)
     {
         GameManger.Instance._gun.GetComponent<ShoutGun>().MoveToPlayer(player);
         //MoveGun(player);
+       
     }
     private void CameraRotate()
     {
@@ -88,10 +91,28 @@ public class LocalPlayer : NetworkBehaviour
         }
     }
 
+    private void AimingShoutGun()
+    {
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            AimingSelf(this.gameObject);
+        }
+    }
+
     [Command]
     private void RegistrationSelf(GameObject player)
     {
         GameManger.Instance.SetPlayers(this.gameObject);
     }
+    [Command]
+    private void AimingSelf(GameObject player)
+    {
+        ShoutGunRotate(player);
+    }
 
+    [Server]
+    private void ShoutGunRotate(GameObject player)
+    {
+        GameManger.Instance._gun.GetComponent<ShoutGun>().ShoutGunAimingSelf(player);
+    }
 }
