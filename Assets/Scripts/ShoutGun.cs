@@ -42,4 +42,9 @@ public class ShoutGun : NetworkBehaviour
     {
         this.gameObject.transform.LookAt(gunPos.GetComponent<LocalPlayer>().localPlayer_Camera.transform);
     }
+    [ClientRpc]
+    public void ShoutGunAimingForward(GameObject gunPos)
+    {
+        this.gameObject.transform.rotation=gunPos.GetComponent<LocalPlayer>()._gunPos.rotation;
+    }
 }

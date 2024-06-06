@@ -97,6 +97,10 @@ public class LocalPlayer : NetworkBehaviour
         {
             AimingSelf(this.gameObject);
         }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            AimingForward(this.gameObject);
+        }
     }
 
     [Command]
@@ -109,7 +113,16 @@ public class LocalPlayer : NetworkBehaviour
     {
         ShoutGunRotate(player);
     }
-
+    [Command]
+    private void AimingForward(GameObject player)
+    {
+        ShoutGunForward(player);
+    }
+    [Server]
+    private void ShoutGunForward(GameObject player)
+    {
+        GameManger.Instance._gun.GetComponent<ShoutGun>().ShoutGunAimingForward(player);
+    }
     [Server]
     private void ShoutGunRotate(GameObject player)
     {

@@ -101,8 +101,8 @@ public class GameManger : Singleton<GameManger>
     private void SetStartPlayer()
     {
         int index = Random.Range(0, 2);
-        ReseveSeverIndex(1);
-        SetNowPlayer(1);
+        ReseveSeverIndex(index);
+        SetNowPlayer(index);
     }
 
     [Server]
