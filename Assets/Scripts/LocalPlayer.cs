@@ -7,6 +7,9 @@ using Mirror;
 
 public class LocalPlayer : NetworkBehaviour
 {
+    [HideInInspector]
+    public bool _isLocalPlayerTurn;
+
     public Transform _gunPos;
 
     [SerializeField]
@@ -17,6 +20,8 @@ public class LocalPlayer : NetworkBehaviour
     private float _cameraXRotate;
     private float _cameraYRotate;
     private float _rotateSpeed = 150.0f;
+
+
 
     private void Start()
     {
@@ -46,8 +51,20 @@ public class LocalPlayer : NetworkBehaviour
         //}
         CameraRotate();
         MouseTest();
-    }
 
+        if (!_isLocalPlayerTurn)
+        {
+            return;
+        }
+        if (_gunPos != GameManger.Instance._gun.transform)
+            MoveGunToPlayer(this.gameObject);
+    }
+    [Command]
+    private void MoveGunToPlayer(GameObject player)
+    {
+        GameManger.Instance._gun.GetComponent<ShoutGun>().MoveToPlayer(player);
+        //MoveGun(player);
+    }
     private void CameraRotate()
     {
         _mouseYRotate = -Input.GetAxis("Mouse Y") * Time.deltaTime * _rotateSpeed;

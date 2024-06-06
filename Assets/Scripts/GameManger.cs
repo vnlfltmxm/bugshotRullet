@@ -10,6 +10,7 @@ public class GameManger : Singleton<GameManger>
     public Transform Gun_GunSpawnPos;
 
     [SyncVar]
+    private GameObject[] _severPlayers = new GameObject[2];
     private GameObject[] _players = new GameObject[2];
 
     [HideInInspector]
@@ -32,25 +33,20 @@ public class GameManger : Singleton<GameManger>
     // Update is called once per frame
     void Update()
     {
-        if (!isClient)
+        if (!isServer)
         {
             return;
         }
-        if(_gun != null)
-        {
-            if (_nowPlayer != null && _gun.transform.position != _nowPlayer.GetComponent<LocalPlayer>()._gunPos.position)
-            {
-                MoveGunToPlayer(_nowPlayer);
-            }
-        }
 
-        if (Input.GetMouseButtonUp(1))
-        {
-            _nowPlayer = null;
-        }
-        Debug.Log(_nowPlayerIndex);
-        Debug.Log(_players[1]);
-        Debug.Log(_players[1].GetComponent<LocalPlayer>()._gunPos.transform.position);
+        //if(_gun != null)
+        //{
+        //    if (_nowPlayer != null && _gun.transform.position != _nowPlayer.GetComponent<LocalPlayer>()._gunPos.position)
+        //    {
+        //        MoveGunToPlayer(_nowPlayer);
+        //    }
+        //}
+
+       
     }
     [Server]
     public void SetPlayers(GameObject player)
@@ -58,16 +54,17 @@ public class GameManger : Singleton<GameManger>
         if(player == null)
             return;
 
-        if (_players[0] == null)
+        if (_severPlayers[0] == null)
         {
-            _players[0] = player;
+            _severPlayers[0] = player;
         }
         else
         {
-            _players[1] = player;
-            _gun = Instantiate(Gun_Prefab, Gun_GunSpawnPos.position, Gun_GunSpawnPos.rotation);
-            NetworkServer.Spawn(_gun);
-            _shoutGun=_gun.GetComponent<ShoutGun>();
+            _severPlayers[1] = player;
+            GameObject gun = Instantiate(Gun_Prefab, Gun_GunSpawnPos.position, Gun_GunSpawnPos.rotation);
+            NetworkServer.Spawn(gun);
+            _shoutGun=gun.GetComponent<ShoutGun>();
+            ReseveSeverPlayer(_severPlayers, gun);
             SetStartPlayer();
             
         }
@@ -103,7 +100,7 @@ public class GameManger : Singleton<GameManger>
     private void SetStartPlayer()
     {
         int index = Random.Range(0, 2);
-        SetNowPlayer(1);
+        SetNowPlayer(0);
     }
 
     [Server]
@@ -114,9 +111,19 @@ public class GameManger : Singleton<GameManger>
     }
 
     [ClientRpc]
+    private void ReseveSeverPlayer(GameObject[] severPlayers,GameObject gun)
+    {
+        _players = severPlayers;
+        _gun = gun;
+        Debug.LogWarning(_players[0].name);
+        Debug.LogWarning(_players[1].name);
+        Debug.LogWarning(_gun);
+    }
+    [ClientRpc]
     private void ClientSetPlayer(int index)
     {
         _nowPlayerIndex = index;
         _nowPlayer = _players[_nowPlayerIndex];
+        _nowPlayer.GetComponent<LocalPlayer>()._isLocalPlayerTurn = true;
     }
 }
