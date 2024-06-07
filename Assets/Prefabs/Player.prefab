@@ -261,7 +261,7 @@ CapsuleCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 17.59
-  m_Height: 88.21
+  m_Height: 100
   m_Direction: 1
   m_Center: {x: 0, y: 44.16, z: 0}
 --- !u!114 &5627547123111508135
@@ -280,6 +280,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _isLocalPlayerTurn: 0
+  _isDie: 0
   _gunPos: {fileID: 7819671608009531531}
   localPlayer_Camera: {fileID: 6260055870474035127}
   _textMesh: {fileID: 5104026030794337113}

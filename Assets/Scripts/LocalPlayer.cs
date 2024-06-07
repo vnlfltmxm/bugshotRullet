@@ -10,7 +10,8 @@ public class LocalPlayer : NetworkBehaviour
 {
     [HideInInspector]
     [SyncVar] public bool _isLocalPlayerTurn = false;
-
+    [HideInInspector]
+    [SyncVar] public bool _isDie = false;
     public Transform _gunPos;
 
     public Camera localPlayer_Camera;
@@ -73,8 +74,9 @@ public class LocalPlayer : NetworkBehaviour
     private void MoveGunToPlayer(GameObject player)
     {
         ShoutGun.Instance.MoveToPlayer(player);
+        ShoutGun.Instance.MoveToPlayerOnSever(player);
         //MoveGun(player);
-       
+
     }
     [Command]
     private void MoveGunToSever()
@@ -123,6 +125,14 @@ public class LocalPlayer : NetworkBehaviour
         ShoutGun.Instance.FireShoutGun(player);
     }
 
+    public void GameOver()
+    {
+        Debug.LogWarning("주금");
+    }
+    public void Survival()
+    {
+        Debug.LogWarning("사름");
+    }
     private void ReadyShoutGun(GameObject player)
     {
         if (Input.GetKeyDown(KeyCode.Space))
@@ -159,7 +169,7 @@ public class LocalPlayer : NetworkBehaviour
         }
 
         GameManger.Instance._gun.GetComponent<ShoutGun>().ShoutGunAimingForward(player);
-        GameManger.Instance._gun.GetComponent<ShoutGun>().TurnOnServer2(player.GetComponent<LocalPlayer>()._gunPos.rotation);
+        GameManger.Instance._gun.GetComponent<ShoutGun>().TurnOnServer2(player.GetComponent<LocalPlayer>()._gunPos.gameObject);
     }
     [Server]
     private void ShoutGunRotate(GameObject player)

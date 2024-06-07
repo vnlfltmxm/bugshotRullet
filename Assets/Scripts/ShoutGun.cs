@@ -52,11 +52,18 @@ public class ShoutGun : Singleton<ShoutGun>
     [Server]
     private void DealeayFire()
     {
+        Debug.LogWarning(this.gameObject.transform.position);
+        Debug.LogWarning(this.gameObject.transform.eulerAngles);
+        Debug.LogWarning(ShoutGun_firePos.transform.position - transform.position);
+        Debug.LogWarning(ShoutGun_firePos.transform.position);
         if (Physics.Raycast(this.gameObject.transform.position, ShoutGun_firePos.transform.position - transform.position, out RaycastHit hitPlayer, 100, ~0, QueryTriggerInteraction.Collide))
         {
             _hitPlayer = hitPlayer.transform.gameObject;
             if (_randomBullet[_nowShougunIndex] != 0)
             {
+                _hitPlayer.GetComponent<LocalPlayer>()._isDie = true;
+
+                PlayerDie(GameManger.Instance._players, _hitPlayer.GetComponent<NetworkBehaviour>().netId);
                 //Á×À½
                 Debug.LogWarning("½ÇÅº");
             }
@@ -90,9 +97,34 @@ public class ShoutGun : Singleton<ShoutGun>
 
         
     }
+    [ClientRpc]
+    public void PlayerDie(GameObject[] players,uint hitPlayerID )
+    {
+        for (int i = 0; i < players.Length; i++)
+        {
+            if (GameManger.Instance._players[i].GetComponent<NetworkBehaviour>().netId == hitPlayerID)
+            {
+                GameManger.Instance._players[i].GetComponent<LocalPlayer>().GameOver();
+            }
+            else
+            {
+                GameManger.Instance._players[i].GetComponent<LocalPlayer>().Survival();
+            }
 
+        }
+    }
 
+    [Server]
+    public void MoveToPlayerOnSever(GameObject player)
+    {
+        if (player != null)
+        {
+            //this.gameObject.transform.rotation = player.GetComponent<LocalPlayer>()._gunPos.rotation;
+            //this.gameObject.transform.eulerAngles = Vector3.zero;
+            this.gameObject.transform.Translate((player.GetComponent<LocalPlayer>()._gunPos.position - this.gameObject.transform.position) * _moveSpeed * Time.deltaTime, Space.World);
 
+        }
+    }
     [ClientRpc]
     public void MoveToPlayer(GameObject player)
     {
@@ -123,13 +155,14 @@ public class ShoutGun : Singleton<ShoutGun>
     [Server]
     public void TurnOnServer(GameObject aaa)
     {
-        this.gameObject.transform.LookAt(aaa.transform);
+        this.gameObject.transform.LookAt(aaa.transform.position);
+        Debug.LogWarning(GameManger.Instance._players[1].transform.position);
     }
 
     [Server]
-    public void TurnOnServer2(Quaternion aaa)
+    public void TurnOnServer2(GameObject aaa)
     {
-        this.gameObject.transform.rotation = aaa;
+        this.gameObject.transform.rotation = aaa.transform.rotation;
     }
 
     [ClientRpc]

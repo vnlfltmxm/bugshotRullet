@@ -252,6 +252,9 @@ MonoBehaviour:
   syncInterval: 0
   Gun_Prefab: {fileID: 598836478655940172, guid: 08955c64bfe7c8a4d9dd89661b61c7d9, type: 3}
   Gun_GunSpawnPos: {fileID: 1389374133}
+  _players:
+  - {fileID: 0}
+  - {fileID: 0}
   _gun: {fileID: 0}
   _nowPlayer: {fileID: 0}
 --- !u!1 &935252341

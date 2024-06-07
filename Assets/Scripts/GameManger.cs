@@ -11,7 +11,8 @@ public class GameManger : Singleton<GameManger>
 
     [SyncVar]
     private GameObject[] _severPlayers = new GameObject[2];
-    private GameObject[] _players = new GameObject[2];
+    [HideInInspector]
+    public GameObject[] _players = new GameObject[2];
 
     [HideInInspector]
     public GameObject _gun;
