@@ -9,7 +9,7 @@ using Org.BouncyCastle.Asn1.Cmp;
 public class LocalPlayer : NetworkBehaviour
 {
     [HideInInspector]
-    public bool _isLocalPlayerTurn = false;
+    [SyncVar] public bool _isLocalPlayerTurn = false;
 
     public Transform _gunPos;
 
@@ -59,10 +59,14 @@ public class LocalPlayer : NetworkBehaviour
         if (_isLocalPlayerTurn)
         {
             if (Vector3.Distance(this._gunPos.position, GameManger.Instance._gun.transform.position) >= 10.0f)
+            {
                 MoveGunToPlayer(this.gameObject);
+                AimingForward(this.gameObject);
+            }
 
             AimingShoutGun();
             ReadyShoutGun();
+            //MoveGunToSever();
         }
     }
     [Command]
@@ -71,6 +75,12 @@ public class LocalPlayer : NetworkBehaviour
         ShoutGun.Instance.MoveToPlayer(player);
         //MoveGun(player);
        
+    }
+    [Command]
+    private void MoveGunToSever()
+    {
+        ShoutGun.Instance.ReloadTransform(GameManger.Instance._gun);
+
     }
     private void CameraRotate()
     {
@@ -142,11 +152,24 @@ public class LocalPlayer : NetworkBehaviour
     [Server]
     private void ShoutGunForward(GameObject player)
     {
+        var shotGun = GameManger.Instance._gun.GetComponent<ShoutGun>();
+        if(shotGun == null)
+        {
+            Debug.LogWarning("null for");
+        }
+
         GameManger.Instance._gun.GetComponent<ShoutGun>().ShoutGunAimingForward(player);
+        GameManger.Instance._gun.GetComponent<ShoutGun>().TurnOnServer2(player.GetComponent<LocalPlayer>()._gunPos.rotation);
     }
     [Server]
     private void ShoutGunRotate(GameObject player)
     {
+        var shotGun = GameManger.Instance._gun.GetComponent<ShoutGun>();
+        if (shotGun == null)
+        {
+            Debug.LogWarning("null rota");
+        }
         GameManger.Instance._gun.GetComponent<ShoutGun>().ShoutGunAimingSelf(player);
+        GameManger.Instance._gun.GetComponent<ShoutGun>().TurnOnServer(player.GetComponent<LocalPlayer>().localPlayer_Camera.gameObject);
     }
 }

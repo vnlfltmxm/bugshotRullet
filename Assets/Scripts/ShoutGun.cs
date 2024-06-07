@@ -4,6 +4,7 @@ using UnityEngine;
 using Mirror;
 using Unity.VisualScripting;
 using UnityEngine.UI;
+using UnityEngine.Experimental.GlobalIllumination;
 
 public class ShoutGun : Singleton<ShoutGun>
 {
@@ -52,14 +53,7 @@ public class ShoutGun : Singleton<ShoutGun>
     public void FireShoutGun()
     {
         Debug.DrawRay(transform.position, (ShoutGun_firePos.transform.position - transform.position) * 100, Color.red,1400);
-
-        var aaa = ShoutGun_firePos.transform.parent.GetComponent<ShoutGun>();
-        if(aaa != null)
-        {
-            var aaaa1 = aaa.text;
-        }
-
-        if(Physics.Raycast(this.gameObject.transform.position, ShoutGun_firePos.transform.position - transform.position, out RaycastHit hitPlayer, 100))
+        if (Physics.Raycast(this.gameObject.transform.position, ShoutGun_firePos.transform.position - transform.position, out RaycastHit hitPlayer, 100, ~0, QueryTriggerInteraction.Collide)) 
         {
             _hitPlayer = hitPlayer.transform.gameObject;
             if (_randomBullet[_nowShougunIndex] != 0)
@@ -86,7 +80,6 @@ public class ShoutGun : Singleton<ShoutGun>
     public void CheckBullect()
     {
 
-        Debug.LogWarning(_nowShougunIndex);
         
     }
 
@@ -118,9 +111,28 @@ public class ShoutGun : Singleton<ShoutGun>
     {
         this.gameObject.transform.LookAt(gunPos.GetComponent<LocalPlayer>().localPlayer_Camera.transform);
     }
+
+    [Server]
+    public void TurnOnServer(GameObject aaa)
+    {
+        this.gameObject.transform.LookAt(aaa.transform);
+    }
+
+    [Server]
+    public void TurnOnServer2(Quaternion aaa)
+    {
+        this.gameObject.transform.rotation = aaa;
+    }
+
     [ClientRpc]
     public void ShoutGunAimingForward(GameObject gunPos)
     {
         this.gameObject.transform.rotation=gunPos.GetComponent<LocalPlayer>()._gunPos.rotation;
+    }
+    [Server]
+    public void ReloadTransform(GameObject gun)
+    {
+        this.gameObject.transform.position = gun.transform.position;
+        this.gameObject.transform.rotation = gun.transform.rotation;
     }
 }

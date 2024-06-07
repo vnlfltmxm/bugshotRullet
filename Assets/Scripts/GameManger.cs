@@ -65,6 +65,7 @@ public class GameManger : Singleton<GameManger>
             GameObject gun = Instantiate(Gun_Prefab, Gun_GunSpawnPos.position, Gun_GunSpawnPos.rotation);
             NetworkServer.Spawn(gun);
             _shoutGun=gun.GetComponent<ShoutGun>();
+            _gun = gun;
             ReseveSeverPlayer(_severPlayers, gun);
             SetStartPlayer();
             gun.GetComponent<ShoutGun>().ReloadShoutGun();
