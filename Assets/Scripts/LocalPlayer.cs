@@ -21,7 +21,9 @@ public class LocalPlayer : NetworkBehaviour
     private float _cameraYRotate;
     private float _rotateSpeed = 150.0f;
 
-
+    public TextMesh _textMesh;
+    [SyncVar]
+    private string _text;
 
     private void Start()
     {
@@ -40,7 +42,8 @@ public class LocalPlayer : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!isLocalPlayer)
+        _textMesh.text = netId.ToString();
+        if (!isLocalPlayer)
         {
             return;
         }
@@ -52,7 +55,7 @@ public class LocalPlayer : NetworkBehaviour
         CameraRotate();
         MouseTest();
         //ShoutGunTest();
-
+        
         if (_isLocalPlayerTurn)
         {
             if (Vector3.Distance(this._gunPos.position, GameManger.Instance._gun.transform.position) >= 10.0f)
@@ -65,7 +68,7 @@ public class LocalPlayer : NetworkBehaviour
     [Command]
     private void MoveGunToPlayer(GameObject player)
     {
-        GameManger.Instance._gun.GetComponent<ShoutGun>().MoveToPlayer(player);
+        ShoutGun.Instance.MoveToPlayer(player);
         //MoveGun(player);
        
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using Unity.VisualScripting;
+using UnityEngine.UI;
 
 public class ShoutGun : Singleton<ShoutGun>
 {
@@ -16,6 +17,7 @@ public class ShoutGun : Singleton<ShoutGun>
     private GameObject _hitPlayer;
     [SyncVar]
     public int _nowShougunIndex;
+    public TextMesh text;
     private float _moveSpeed = 3.0f;
     void Start()
     {
@@ -25,6 +27,7 @@ public class ShoutGun : Singleton<ShoutGun>
     void Update()
     {
         Debug.DrawRay(transform.position, (ShoutGun_firePos.transform.position-transform.position)*100,Color.green);
+        text.text = netId.ToString();
     }
     [Server]
     public void ReloadShoutGun()
@@ -48,6 +51,14 @@ public class ShoutGun : Singleton<ShoutGun>
     [Server]
     public void FireShoutGun()
     {
+        Debug.DrawRay(transform.position, (ShoutGun_firePos.transform.position - transform.position) * 100, Color.red,1400);
+
+        var aaa = ShoutGun_firePos.transform.parent.GetComponent<ShoutGun>();
+        if(aaa != null)
+        {
+            var aaaa1 = aaa.text;
+        }
+
         if(Physics.Raycast(this.gameObject.transform.position, ShoutGun_firePos.transform.position - transform.position, out RaycastHit hitPlayer, 100))
         {
             _hitPlayer = hitPlayer.transform.gameObject;
@@ -66,13 +77,17 @@ public class ShoutGun : Singleton<ShoutGun>
                 _nowShougunIndex++;
             }
         }
+        else
+        {
+            Debug.LogWarning("감지 못함");
+        }
     }
     [ClientRpc]
     public void CheckBullect()
     {
 
         Debug.LogWarning(_nowShougunIndex);
-
+        
     }
 
 
