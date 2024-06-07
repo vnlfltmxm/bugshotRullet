@@ -6,8 +6,9 @@ using Mirror;
 public class ShoutGun : NetworkBehaviour
 {
     private Queue<int> _bullet=new Queue<int>();
-    [SyncVar]
-    public int[] _randomBullet=new int[8];
+    //[SyncVar]
+    //public int[] _randomBullet=new int[8];
+    public SyncList<int> _randomBullet = new SyncList<int>();
     private float _moveSpeed = 3.0f;
     void Start()
     {
@@ -23,15 +24,15 @@ public class ShoutGun : NetworkBehaviour
     {
         int randomIndex = Random.Range(0, 8);
 
-        for (int i = 0; i < _randomBullet.Length; i++)
+        for (int i = 0; i < 8; i++)
         {
             if (randomIndex != i)
             {
-                _randomBullet[i] = 0;
+                _randomBullet.Add(0);
             }
             else
             {
-                _randomBullet[i] = 1;
+                _randomBullet.Add(1);
             }
         }
         //Test();
@@ -44,7 +45,7 @@ public class ShoutGun : NetworkBehaviour
     //[ClientRpc]
     public void Test()
     {
-        for (int i = 0; i < _randomBullet.Length; i++)
+        for (int i = 0; i < _randomBullet.Count; i++)
         {
             Debug.LogWarning(_randomBullet[i]);
         }
