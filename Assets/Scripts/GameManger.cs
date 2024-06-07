@@ -67,14 +67,15 @@ public class GameManger : Singleton<GameManger>
             _shoutGun=gun.GetComponent<ShoutGun>();
             ReseveSeverPlayer(_severPlayers, gun);
             SetStartPlayer();
-            
+            gun.GetComponent<ShoutGun>().ReloadShoutGun();
+            ReadyGame();
         }
     }
 
     [ClientRpc]//½ÇÇè¿ë
     private void ReadyGame()
     {
-
+        _gun.GetComponent<ShoutGun>().Test();
         
     }
    

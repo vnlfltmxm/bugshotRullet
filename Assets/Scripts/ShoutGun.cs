@@ -5,6 +5,9 @@ using Mirror;
 
 public class ShoutGun : NetworkBehaviour
 {
+    private Queue<int> _bullet=new Queue<int>();
+    [SyncVar]
+    public int[] _randomBullet=new int[8];
     private float _moveSpeed = 3.0f;
     void Start()
     {
@@ -15,6 +18,40 @@ public class ShoutGun : NetworkBehaviour
     {
         
     }
+    [Server]
+    public void ReloadShoutGun()
+    {
+        int randomIndex = Random.Range(0, 8);
+
+        for (int i = 0; i < _randomBullet.Length; i++)
+        {
+            if (randomIndex != i)
+            {
+                _randomBullet[i] = 0;
+            }
+            else
+            {
+                _randomBullet[i] = 1;
+            }
+        }
+        //Test();
+    }
+    [Server]
+    private void HookRelad()
+    {
+
+    }
+    //[ClientRpc]
+    public void Test()
+    {
+        for (int i = 0; i < _randomBullet.Length; i++)
+        {
+            Debug.LogWarning(_randomBullet[i]);
+        }
+        
+    }
+
+
 
     [ClientRpc]
     public void MoveToPlayer(GameObject player)
