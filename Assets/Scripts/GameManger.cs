@@ -68,14 +68,14 @@ public class GameManger : Singleton<GameManger>
             ReseveSeverPlayer(_severPlayers, gun);
             SetStartPlayer();
             gun.GetComponent<ShoutGun>().ReloadShoutGun();
-            ReadyGame();
+            //ReadyGame();
         }
     }
 
     [ClientRpc]//½ÇÇè¿ë
     private void ReadyGame()
     {
-        _gun.GetComponent<ShoutGun>().Test();
+        //_gun.GetComponent<ShoutGun>().Test();
         
     }
    
@@ -110,7 +110,7 @@ public class GameManger : Singleton<GameManger>
     private void SetNowPlayer(int index)
     {
         ClientSetPlayer(index);
-        ReadyGame();
+        //ReadyGame();
     }
     [ClientRpc]
     private void ReseveSeverIndex(int index)

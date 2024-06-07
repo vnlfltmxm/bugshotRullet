@@ -9,7 +9,7 @@ using Org.BouncyCastle.Asn1.Cmp;
 public class LocalPlayer : NetworkBehaviour
 {
     [HideInInspector]
-    public bool _isLocalPlayerTurn;
+    public bool _isLocalPlayerTurn = false;
 
     public Transform _gunPos;
 
@@ -51,15 +51,16 @@ public class LocalPlayer : NetworkBehaviour
         //}
         CameraRotate();
         MouseTest();
+        //ShoutGunTest();
 
-        if (!_isLocalPlayerTurn)
+        if (_isLocalPlayerTurn)
         {
-            return;
-        }
-        if (Vector3.Distance(_gunPos.position, GameManger.Instance._gun.transform.position) >= 10.0f) 
-            MoveGunToPlayer(this.gameObject);
+            if (Vector3.Distance(this._gunPos.position, GameManger.Instance._gun.transform.position) >= 10.0f)
+                MoveGunToPlayer(this.gameObject);
 
-        AimingShoutGun();
+            AimingShoutGun();
+            ReadyShoutGun();
+        }
     }
     [Command]
     private void MoveGunToPlayer(GameObject player)
@@ -102,6 +103,23 @@ public class LocalPlayer : NetworkBehaviour
             AimingForward(this.gameObject);
         }
     }
+
+    [Command]
+    private void Fire()
+    {
+        ShoutGun.Instance.FireShoutGun();
+    }
+
+    private void ReadyShoutGun()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            this._isLocalPlayerTurn = false;
+            Fire();
+        }
+            
+    }
+
 
     [Command]
     private void RegistrationSelf(GameObject player)

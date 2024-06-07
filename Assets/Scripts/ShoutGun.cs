@@ -2,13 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using Unity.VisualScripting;
 
-public class ShoutGun : NetworkBehaviour
+public class ShoutGun : Singleton<ShoutGun>
 {
     private Queue<int> _bullet=new Queue<int>();
+    [SerializeField]
+    private GameObject ShoutGun_firePos;
     //[SyncVar]
     //public int[] _randomBullet=new int[8];
     public SyncList<int> _randomBullet = new SyncList<int>();
+    [SyncVar]
+    private GameObject _hitPlayer;
+    [SyncVar]
+    public int _nowShougunIndex;
     private float _moveSpeed = 3.0f;
     void Start()
     {
@@ -17,7 +24,7 @@ public class ShoutGun : NetworkBehaviour
 
     void Update()
     {
-        
+        Debug.DrawRay(transform.position, (ShoutGun_firePos.transform.position-transform.position)*100,Color.green);
     }
     [Server]
     public void ReloadShoutGun()
@@ -35,21 +42,37 @@ public class ShoutGun : NetworkBehaviour
                 _randomBullet.Add(1);
             }
         }
+        _nowShougunIndex = 0;
         //Test();
     }
     [Server]
-    private void HookRelad()
+    public void FireShoutGun()
+    {
+        if(Physics.Raycast(this.gameObject.transform.position, ShoutGun_firePos.transform.position - transform.position, out RaycastHit hitPlayer, 100))
+        {
+            _hitPlayer = hitPlayer.transform.gameObject;
+            if (_randomBullet[_nowShougunIndex] != 0)
+            {
+                //Á×À½
+                Debug.LogWarning("½ÇÅº");
+            }
+            else
+            {
+                //»ï
+                Debug.LogWarning("°øÅº");
+                CheckBullect();
+                //ÀÌ¶§¸ÂÀº ÇÃ·¹ÀÌ¾îÀÇ ÅÏÀ» true·Î
+                _hitPlayer.GetComponent<LocalPlayer>()._isLocalPlayerTurn = true;
+                _nowShougunIndex++;
+            }
+        }
+    }
+    [ClientRpc]
+    public void CheckBullect()
     {
 
-    }
-    //[ClientRpc]
-    public void Test()
-    {
-        for (int i = 0; i < _randomBullet.Count; i++)
-        {
-            Debug.LogWarning(_randomBullet[i]);
-        }
-        
+        Debug.LogWarning(_nowShougunIndex);
+
     }
 
 
