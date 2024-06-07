@@ -50,11 +50,9 @@ public class ShoutGun : Singleton<ShoutGun>
         //Test();
     }
     [Server]
-    public void FireShoutGun(GameObject player)
+    private void DealeayFire()
     {
-        Debug.DrawRay(transform.position, (ShoutGun_firePos.transform.position - transform.position) * 100, Color.red,1400);
-        player.GetComponent<LocalPlayer>()._isLocalPlayerTurn = false;
-        if (Physics.Raycast(this.gameObject.transform.position, ShoutGun_firePos.transform.position - transform.position, out RaycastHit hitPlayer, 100, ~0, QueryTriggerInteraction.Collide)) 
+        if (Physics.Raycast(this.gameObject.transform.position, ShoutGun_firePos.transform.position - transform.position, out RaycastHit hitPlayer, 100, ~0, QueryTriggerInteraction.Collide))
         {
             _hitPlayer = hitPlayer.transform.gameObject;
             if (_randomBullet[_nowShougunIndex] != 0)
@@ -76,6 +74,15 @@ public class ShoutGun : Singleton<ShoutGun>
         {
             Debug.LogWarning("감지 못함");
         }
+    }
+    [Server]
+    public void FireShoutGun(GameObject player)
+    {
+        Debug.DrawRay(transform.position, (ShoutGun_firePos.transform.position - transform.position) * 100, Color.red,1400);
+        player.GetComponent<LocalPlayer>()._isLocalPlayerTurn = false;
+
+        Invoke(nameof(DealeayFire), 3);
+        
     }
     [ClientRpc]
     public void CheckBullect()
