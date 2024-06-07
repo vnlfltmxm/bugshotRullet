@@ -65,7 +65,7 @@ public class LocalPlayer : NetworkBehaviour
             }
 
             AimingShoutGun();
-            ReadyShoutGun();
+            ReadyShoutGun(this.gameObject);
             //MoveGunToSever();
         }
     }
@@ -118,17 +118,17 @@ public class LocalPlayer : NetworkBehaviour
     }
 
     [Command]
-    private void Fire()
+    private void Fire(GameObject player)
     {
-        ShoutGun.Instance.FireShoutGun();
+        ShoutGun.Instance.FireShoutGun(player);
     }
 
-    private void ReadyShoutGun()
+    private void ReadyShoutGun(GameObject player)
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             this._isLocalPlayerTurn = false;
-            Fire();
+            Fire(player);
         }
             
     }

@@ -50,9 +50,10 @@ public class ShoutGun : Singleton<ShoutGun>
         //Test();
     }
     [Server]
-    public void FireShoutGun()
+    public void FireShoutGun(GameObject player)
     {
         Debug.DrawRay(transform.position, (ShoutGun_firePos.transform.position - transform.position) * 100, Color.red,1400);
+        player.GetComponent<LocalPlayer>()._isLocalPlayerTurn = false;
         if (Physics.Raycast(this.gameObject.transform.position, ShoutGun_firePos.transform.position - transform.position, out RaycastHit hitPlayer, 100, ~0, QueryTriggerInteraction.Collide)) 
         {
             _hitPlayer = hitPlayer.transform.gameObject;
