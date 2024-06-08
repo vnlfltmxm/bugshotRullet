@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using Mirror;
 using Org.BouncyCastle.Asn1.Cmp;
+using UnityEngine.UI;
 
 public class LocalPlayer : NetworkBehaviour
 {
@@ -26,6 +27,16 @@ public class LocalPlayer : NetworkBehaviour
     [SyncVar]
     private string _text;
 
+    [SerializeField]
+    private Canvas _canvas;
+    [SerializeField]
+    private Text _finishText;
+    [SerializeField]
+    private Image _DieImage;
+    [SerializeField]
+    private Image _Survivalimage;
+
+
     private void Start()
     {
         if (!isLocalPlayer)
@@ -36,6 +47,7 @@ public class LocalPlayer : NetworkBehaviour
         localPlayer_Camera.transform.forward = transform.forward;        
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        _canvas.gameObject.SetActive(true);
         RegistrationSelf(this.gameObject);
     }
 
@@ -127,12 +139,31 @@ public class LocalPlayer : NetworkBehaviour
 
     public void GameOver()
     {
-        Debug.LogWarning("주금");
+        _canvas.gameObject.SetActive(true);
+        _Survivalimage.enabled = false;
+
+        Invoke(nameof(SetOverString), 1);
+
     }
     public void Survival()
     {
-        Debug.LogWarning("사름");
+        _canvas.gameObject.SetActive(true);
+        _DieImage.enabled = false;
+        Invoke(nameof(SetSurviverString), 1);
     }
+
+    private void SetOverString()
+    {
+        _DieImage.color = Color.black;
+        _finishText.text = "You Die";
+    }
+
+    private void SetSurviverString()
+    {
+        _Survivalimage.enabled = false;
+        _finishText.text = "You Survive";
+    }
+
     private void ReadyShoutGun(GameObject player)
     {
         if (Input.GetKeyDown(KeyCode.Space))
