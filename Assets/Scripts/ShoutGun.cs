@@ -69,12 +69,10 @@ public class ShoutGun : Singleton<ShoutGun>
                 PlayEffect();
                 //PlayerDie(GameManger.Instance._players, _hitPlayer.GetComponent<NetworkBehaviour>().netId);
                 //죽음
-                Debug.LogWarning("실탄");
             }
             else
             {
                 //삼
-                Debug.LogWarning("공탄");
                 PlaySoundToEmpty();
                 //이때맞은 플레이어의 턴을 true로
                 Invoke(nameof(DelayTurnChange), 1);
