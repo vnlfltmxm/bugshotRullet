@@ -39,6 +39,7 @@ public class LocalPlayer : NetworkBehaviour
 
     private void Start()
     {
+        _canvas.gameObject.SetActive(false);
         if (!isLocalPlayer)
         {
             localPlayer_Camera.gameObject.SetActive(false);
@@ -47,7 +48,7 @@ public class LocalPlayer : NetworkBehaviour
         localPlayer_Camera.transform.forward = transform.forward;        
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        _canvas.gameObject.SetActive(true);
+        
         RegistrationSelf(this.gameObject);
     }
 
@@ -65,6 +66,10 @@ public class LocalPlayer : NetworkBehaviour
         //{
         //    CameraRotate();
         //}
+        OpenCanvase();
+        if (_isDie)
+            return;
+
         CameraRotate();
         MouseTest();
         //ShoutGunTest();
@@ -136,9 +141,12 @@ public class LocalPlayer : NetworkBehaviour
     {
         ShoutGun.Instance.FireShoutGun(player);
     }
-
     public void GameOver()
     {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
         _canvas.gameObject.SetActive(true);
         _Survivalimage.enabled = false;
 
@@ -147,9 +155,33 @@ public class LocalPlayer : NetworkBehaviour
     }
     public void Survival()
     {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
         _canvas.gameObject.SetActive(true);
         _DieImage.enabled = false;
         Invoke(nameof(SetSurviverString), 1);
+    }
+
+    private void OpenCanvase()
+    {
+        if (!GameManger.Instance._isGameFinsh)
+            return;
+        if (!isLocalPlayer)
+            return;
+        if (_canvas.gameObject.activeSelf)
+            return;
+
+
+        if (_isDie)
+        {
+            GameOver();
+        }
+        else
+        {
+            Survival();
+        }
     }
 
     private void SetOverString()

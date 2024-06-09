@@ -20,9 +20,16 @@ public class ShoutGun : Singleton<ShoutGun>
     public int _nowShougunIndex;
     public TextMesh text;
     private float _moveSpeed = 3.0f;
+
+    [SerializeField]
+    private GameObject _fireEffect;
+    [SerializeField]
+    private GameObject _emptySound;
+    [SerializeField]
+    private GameObject _reloadSound;
     void Start()
     {
-        
+        _fireEffect.SetActive(false);
     }
 
     void Update()
@@ -52,18 +59,15 @@ public class ShoutGun : Singleton<ShoutGun>
     [Server]
     private void DealeayFire()
     {
-        Debug.LogWarning(this.gameObject.transform.position);
-        Debug.LogWarning(this.gameObject.transform.eulerAngles);
-        Debug.LogWarning(ShoutGun_firePos.transform.position - transform.position);
-        Debug.LogWarning(ShoutGun_firePos.transform.position);
         if (Physics.Raycast(this.gameObject.transform.position, ShoutGun_firePos.transform.position - transform.position, out RaycastHit hitPlayer, 100, ~0, QueryTriggerInteraction.Collide))
         {
             _hitPlayer = hitPlayer.transform.gameObject;
             if (_randomBullet[_nowShougunIndex] != 0)
             {
                 _hitPlayer.GetComponent<LocalPlayer>()._isDie = true;
-
-                PlayerDie(GameManger.Instance._players, _hitPlayer.GetComponent<NetworkBehaviour>().netId);
+                GameManger.Instance._isGameFinsh = true;
+                PlayEffect();
+                //PlayerDie(GameManger.Instance._players, _hitPlayer.GetComponent<NetworkBehaviour>().netId);
                 //Á×À½
                 Debug.LogWarning("½ÇÅº");
             }
@@ -71,10 +75,9 @@ public class ShoutGun : Singleton<ShoutGun>
             {
                 //»ï
                 Debug.LogWarning("°øÅº");
-                CheckBullect();
+                PlaySoundToEmpty();
                 //ÀÌ¶§¸ÂÀº ÇÃ·¹ÀÌ¾îÀÇ ÅÏÀ» true·Î
-                _hitPlayer.GetComponent<LocalPlayer>()._isLocalPlayerTurn = true;
-                _nowShougunIndex++;
+                Invoke(nameof(DelayTurnChange), 1);
             }
         }
         else
@@ -83,19 +86,38 @@ public class ShoutGun : Singleton<ShoutGun>
         }
     }
     [Server]
+    public void DelayTurnChange()
+    {
+        _hitPlayer.GetComponent<LocalPlayer>()._isLocalPlayerTurn = true;
+        _nowShougunIndex++;
+    }
+    [Server]
     public void FireShoutGun(GameObject player)
     {
         Debug.DrawRay(transform.position, (ShoutGun_firePos.transform.position - transform.position) * 100, Color.red,1400);
         player.GetComponent<LocalPlayer>()._isLocalPlayerTurn = false;
 
+        PlaySoundToReload();
         Invoke(nameof(DealeayFire), 3);
         
     }
     [ClientRpc]
-    public void CheckBullect()
+    public void PlaySoundToReload()
     {
-
+        _reloadSound.GetComponent<AudioSource>().Play();
         
+    }
+    [ClientRpc]
+    public void PlaySoundToEmpty()
+    {
+        _emptySound.GetComponent<AudioSource>().Play();
+
+    }
+    [ClientRpc]
+    public void PlayEffect()
+    {
+        _fireEffect.SetActive(true);
+
     }
     [ClientRpc]
     public void PlayerDie(GameObject[] players,uint hitPlayerID )
@@ -156,7 +178,6 @@ public class ShoutGun : Singleton<ShoutGun>
     public void TurnOnServer(GameObject aaa)
     {
         this.gameObject.transform.LookAt(aaa.transform.position);
-        Debug.LogWarning(GameManger.Instance._players[1].transform.position);
     }
 
     [Server]

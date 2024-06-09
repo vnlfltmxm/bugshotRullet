@@ -8,7 +8,8 @@ public class GameManger : Singleton<GameManger>
 {
     public GameObject Gun_Prefab;
     public Transform Gun_GunSpawnPos;
-
+    [SyncVar]
+    public bool _isGameFinsh = false;
     [SyncVar]
     private GameObject[] _severPlayers = new GameObject[2];
     [HideInInspector]
